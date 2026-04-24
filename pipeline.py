@@ -4,6 +4,7 @@ import time
 from ingestion.lectura_csv import leer_datos_csv
 from ingestion.leer_batch import leer_datos_batch
 from ingestion.fuente_realtime import leer_clima_tiempo_real
+from procesamiento.transformacion import aplicar_transformaciones
 
 def run_orchestator():
 
@@ -40,6 +41,16 @@ def run_orchestator():
             print(df.head(2))
         else:
             print("Empty Table (Check connection)")
+
+    print("\n--- Aplicando transformaciones")
+    almacen_datos = aplicar_transformaciones(almacen_datos)
+
+    print("\n--- Resumen final de almacen_datos")
+    for key, val in almacen_datos.items():
+        if hasattr(val, 'shape') and len(val.shape) == 2:
+            print(f"  📦 {key}: {val.shape[0]} filas x {val.shape[1]} columnas")
+        else:
+            print(f"  📦 {key}: {val}")
 
     return almacen_datos
 
